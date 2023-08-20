@@ -1,18 +1,28 @@
 #!/bin/bash
-sudo apt update -y
 
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+# Update package repository
+sudo apt update
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# Install necessary packages
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" -y
+# Add Docker GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-sudo apt update -y
+# Add Docker repository for x86_64 / amd64 architecture
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-apt-cache policy docker-ce -y
+# Update package repository again
+sudo apt update
 
-sudo apt install docker-ce -y
+# Install Docker
+sudo apt install -y docker-ce
 
-#sudo systemctl status docker
+# Start and enable Docker service
+sudo systemctl start docker
+sudo systemctl enable docker
 
-sudo chmod 777 /var/run/docker.sock
+# Add the current user to the docker group
+sudo usermod -aG docker $USER
+
+echo "Docker installation completed. Please log out and log back in (or restart your computer) to apply group changes."

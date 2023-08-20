@@ -1,15 +1,16 @@
-#Add the following line to /etc/apt/sources.list:#
+#!/bin/bash
 
-deb https://debian.opennms.org/ stable main
+# Check if the script is run as root
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as root or using sudo."
+    exit 1
+fi
 
-#Install GPG key of the repository:#
+# Update package list and install OpenJDK
+apt update
+apt install -y openjdk-11-jdk
 
-wget -O - http://debian.opennms.org/OPENNMS-GPG-KEY | sudo apt-key add -
+# Verify Java installation
+java -version
 
-#Update the package index:#
-
-sudo apt-get update
-
-#Install oracle-java8-installer deb package:#
-
-sudo apt-get install oracle-java8-installer
+echo "Java installation completed."
